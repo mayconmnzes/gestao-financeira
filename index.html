@@ -3,66 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMT Financeiro Pro - v5</title>
+    <title>SMT Financeiro - Gestão de Crédito</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .modal { display: none; position: fixed; z-index: 50; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }
         .modal-content { background: white; margin: 5% auto; padding: 20px; border-radius: 20px; width: 95%; max-height: 90vh; overflow-y: auto; }
-        canvas { max-height: 300px; }
+        .btn-acao { transition: transform 0.1s; }
+        .btn-acao:active { transform: scale(0.95); }
     </style>
 </head>
 <body class="bg-slate-100 p-3 pb-24 text-slate-800">
 
-    <header class="flex justify-between items-center mb-5 bg-white p-4 rounded-2xl shadow-sm">
-        <h1 class="font-black text-indigo-900 uppercase tracking-tighter">Gestão DE EMPRESTIMO 💸💸💸💸</h1>
-        <div class="text-right">
-            <p class="text-[10px] text-gray-400 font-bold uppercase">Investido</p>
-            <p id="investido" class="font-black text-indigo-600 text-lg">R$ 0,00</p>
+    <header class="flex justify-between items-center mb-5 bg-white p-4 rounded-2xl shadow-sm border-b-2 border-indigo-100">
+        <div>
+            <h1 class="font-black text-indigo-900 uppercase tracking-tighter leading-none">SMT GESTÃO</h1>
+            <p class="text-[9px] font-bold text-slate-400">MICROEMPRESA LEGALIZADA</p>
         </div>
+        <button onclick="abrirListaClientes()" class="bg-indigo-100 text-indigo-700 p-2 rounded-xl text-[10px] font-black uppercase">Meus Clientes</button>
     </header>
 
-    <details class="bg-indigo-600 text-white p-4 rounded-2xl shadow-lg mb-6">
-        <summary class="font-bold text-sm cursor-pointer list-none flex justify-between items-center uppercase">
-            <span>➕ Novo Empréstimo</span>
-            <span class="text-xs opacity-70">Abrir</span>
-        </summary>
-        <div class="space-y-3 mt-4 text-slate-800">
-            <input list="listaClientesNomes" id="nome" placeholder="Nome do Cliente" class="w-full p-3 bg-white border rounded-xl outline-none">
-            <datalist id="listaClientesNomes"></datalist>
-            <div class="flex gap-2">
-                <input id="valor" type="number" placeholder="Valor R$" class="w-1/2 p-3 bg-white border rounded-xl">
-                <input id="juros" type="number" placeholder="Juros %" class="w-1/2 p-3 bg-white border rounded-xl">
-            </div>
-            <input id="data" type="date" class="w-full p-3 bg-white border rounded-xl">
-            <button onclick="salvarEmprestimo()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-black uppercase tracking-widest shadow-xl">Cadastrar</button>
+    <div class="grid grid-cols-2 gap-2 mb-4">
+        <div class="bg-indigo-600 p-4 rounded-2xl text-white shadow-lg col-span-2">
+            <p class="text-[10px] opacity-70 uppercase font-bold tracking-widest">Capital Total na Rua</p>
+            <p id="investido" class="text-3xl font-black">R$ 0,00</p>
         </div>
-    </details>
+    </div>
 
+    <div class="bg-white p-5 rounded-2xl shadow-sm mb-6 border border-slate-200">
+        <h2 class="font-black text-slate-700 text-xs mb-4 uppercase tracking-widest">➕ Novo Lançamento</h2>
+        <div class="space-y-3">
+            <div class="relative">
+                <input list="listaClientesNomes" id="nome" placeholder="Nome do Cliente" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-xl outline-none focus:border-indigo-500 font-bold">
+                <datalist id="listaClientesNomes"></datalist>
+            </div>
+            
+            <div class="flex gap-2">
+                <input id="valor" type="number" placeholder="Valor R$" class="w-1/2 p-4 bg-slate-50 border-2 border-slate-100 rounded-xl font-bold">
+                <input id="juros" type="number" placeholder="Juros %" class="w-1/2 p-4 bg-slate-50 border-2 border-slate-100 rounded-xl font-bold">
+            </div>
+            
+            <div class="flex flex-col">
+                <label class="text-[9px] font-black text-slate-400 ml-2 mb-1">DATA DE RECEBIMENTO</label>
+                <input id="data" type="date" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-xl font-bold">
+            </div>
+            
+            <button onclick="salvarEmprestimo()" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-black uppercase shadow-lg btn-acao">Cadastrar Empréstimo</button>
+        </div>
+    </div>
+
+    <h3 class="text-[10px] font-black text-slate-400 uppercase mb-3 ml-2 tracking-widest">Cobranças Ativas</h3>
     <div id="listaEmprestimos" class="space-y-4 mb-8"></div>
 
-    <div class="bg-white p-4 rounded-2xl shadow-md mb-6">
-        <h3 class="text-xs font-black text-gray-400 uppercase mb-4 tracking-widest">Lucro Mensal (Juros)</h3>
+    <div class="bg-white p-5 rounded-2xl shadow-sm mb-6 border border-slate-200">
+        <h3 class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest text-center">Lucro Mensal (Juros Recebidos)</h3>
         <canvas id="graficoLucro"></canvas>
     </div>
 
-    <div id="modalHistorico" class="modal" onclick="fecharModalExterno(event)">
+    <div id="modalGeral" class="modal" onclick="fecharModalExterno(event)">
         <div class="modal-content shadow-2xl" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center mb-4 border-b pb-2">
-                <h2 id="modalNome" class="font-black text-indigo-900 uppercase">Histórico</h2>
-                <button onclick="fecharModal()" class="text-red-500 font-bold px-4">X</button>
+            <div class="flex justify-between items-center mb-4 border-b pb-3">
+                <h2 id="modalTitulo" class="font-black text-indigo-900 uppercase">Histórico</h2>
+                <button onclick="fecharModal()" class="bg-slate-100 p-2 rounded-full px-4 text-red-500 font-black">FECHAR</button>
             </div>
-            <div id="corpoHistorico" class="space-y-3"></div>
+            <div id="corpoModal" class="space-y-3"></div>
         </div>
     </div>
 
     <script>
-        // Estrutura de dados com suporte ao gráfico
-        let db = JSON.parse(localStorage.getItem('smt_financeiro_v5')) || { 
+        // Versão 6.0 - Foco em Persistência e Lista de Clientes
+        let db = JSON.parse(localStorage.getItem('smt_v6')) || { 
             ativos: [], 
-            lucroAcumulado: 0, 
             historicoGlobal: [],
-            lucroPorMes: new Array(12).fill(0) // Array de jan a dez
+            clientes: [], // Lista de nomes únicos
+            lucroPorMes: new Array(12).fill(0) 
         };
 
         let meuGrafico;
@@ -77,13 +91,10 @@
                         label: 'Lucro R$',
                         data: db.lucroPorMes,
                         backgroundColor: '#4f46e5',
-                        borderRadius: 8
+                        borderRadius: 10
                     }]
                 },
-                options: { 
-                    responsive: true,
-                    scales: { y: { beginAtZero: true } }
-                }
+                options: { responsive: true, scales: { y: { beginAtZero: true } } }
             });
         }
 
@@ -93,15 +104,13 @@
             const juros = parseFloat(document.getElementById('juros').value);
             const data = document.getElementById('data').value;
 
-            if(!nome || isNaN(valor) || !data) return alert("Erro: Preencha todos os campos.");
+            if(!nome || isNaN(valor) || !data) return alert("Preencha todos os campos corretamente!");
 
-            const novo = {
-                id: Date.now(),
-                nome, valor, juros, data,
-                valorJuro: (valor * (juros / 100))
-            };
+            const novo = { id: Date.now(), nome, valor, juros, data, valorJuro: (valor * (juros / 100)) };
 
             db.ativos.push(novo);
+            if(!db.clientes.includes(nome)) db.clientes.push(nome);
+            
             atualizarStorage();
             renderizar();
             document.querySelectorAll('input').forEach(i => i.value = '');
@@ -111,16 +120,15 @@
             const index = db.ativos.findIndex(a => a.id === id);
             const emp = db.ativos[index];
             const hoje = new Date();
-            const mesAtual = hoje.getMonth(); // 0 a 11
+            const mesAtual = hoje.getMonth();
 
-            const opcao = confirm(`BAIXA: ${emp.nome}\n\nOK: Recebeu TUDO (R$ ${(emp.valor + emp.valorJuro).toFixed(2)})\nCANCELAR: Recebeu SÓ JUROS (R$ ${emp.valorJuro.toFixed(2)})`);
+            const opcao = confirm(`BAIXA PARA: ${emp.nome}\n\nOK: Recebeu TUDO (R$ ${(emp.valor + emp.valorJuro).toFixed(2)})\nCANCELAR: Recebeu SÓ JUROS (R$ ${emp.valorJuro.toFixed(2)})`);
 
-            // Registrar lucro no mês atual
             db.lucroPorMes[mesAtual] += emp.valorJuro;
 
             const registro = {
                 nome: emp.nome,
-                dataPagamento: hoje.toLocaleDateString('pt-BR'),
+                data: hoje.toLocaleDateString('pt-BR'),
                 tipo: opcao ? "Quitação Total" : "Apenas Juros",
                 valor: opcao ? (emp.valor + emp.valorJuro) : emp.valorJuro,
                 status: hoje > new Date(emp.data + 'T00:00:00') ? "ATRASADO ⚠️" : "EM DIA ✅"
@@ -131,9 +139,9 @@
             if (opcao) {
                 db.ativos.splice(index, 1);
             } else {
-                let novaData = new Date(emp.data + 'T00:00:00');
-                novaData.setMonth(novaData.getMonth() + 1);
-                emp.data = novaData.toISOString().split('T')[0];
+                let d = new Date(emp.data + 'T00:00:00');
+                d.setMonth(d.getMonth() + 1);
+                emp.data = d.toISOString().split('T')[0];
             }
 
             atualizarStorage();
@@ -141,53 +149,80 @@
             meuGrafico.update();
         }
 
-        function abrirHistorico(nomeCliente) {
-            document.getElementById('modalNome').innerText = nomeCliente;
-            const corpo = document.getElementById('corpoHistorico');
-            corpo.innerHTML = "";
-            const hist = db.historicoGlobal.filter(h => h.nome === nomeCliente).reverse();
+        function abrirListaClientes() {
+            document.getElementById('modalTitulo').innerText = "Meus Clientes";
+            const corpo = document.getElementById('corpoModal');
+            corpo.innerHTML = db.clientes.length === 0 ? "Nenhum cliente cadastrado." : "";
             
+            db.clientes.sort().forEach(nome => {
+                corpo.innerHTML += `
+                    <div class="flex justify-between items-center p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <p class="font-black text-slate-700 uppercase">${nome}</p>
+                        <div class="flex gap-2">
+                            <button onclick="selecionarCliente('${nome}')" class="bg-indigo-600 text-white text-[9px] font-black px-3 py-2 rounded-lg">USAR</button>
+                            <button onclick="verHistorico('${nome}')" class="bg-slate-200 text-slate-600 text-[9px] font-black px-3 py-2 rounded-lg">HISTÓRICO</button>
+                        </div>
+                    </div>`;
+            });
+            document.getElementById('modalGeral').style.display = 'block';
+        }
+
+        function selecionarCliente(nome) {
+            document.getElementById('nome').value = nome;
+            fecharModal();
+        }
+
+        function verHistorico(nome) {
+            document.getElementById('modalTitulo').innerText = "Histórico: " + nome;
+            const corpo = document.getElementById('corpoModal');
+            corpo.innerHTML = "";
+            const hist = db.historicoGlobal.filter(h => h.nome === nome).reverse();
+            
+            if(hist.length === 0) corpo.innerHTML = "Sem histórico para este cliente.";
             hist.forEach(h => {
                 corpo.innerHTML += `
                     <div class="p-3 bg-slate-50 rounded-xl border-l-4 ${h.status.includes('DIA') ? 'border-green-500' : 'border-red-500'}">
-                        <div class="flex justify-between font-bold text-[10px]"><span>${h.dataPagamento}</span><span>${h.status}</span></div>
+                        <div class="flex justify-between text-[10px] font-bold"><span>${h.data}</span><span>${h.status}</span></div>
                         <p class="text-sm font-black">${h.tipo}</p>
-                        <p class="text-xs text-gray-500">Valor: R$ ${h.valor.toFixed(2)}</p>
+                        <p class="text-xs text-slate-500">R$ ${h.valor.toFixed(2)}</p>
                     </div>`;
             });
-            document.getElementById('modalHistorico').style.display = 'block';
+            document.getElementById('modalGeral').style.display = 'block';
         }
 
-        function fecharModal() { document.getElementById('modalHistorico').style.display = 'none'; }
-        function fecharModalExterno(e) { if(e.target.id === 'modalHistorico') fecharModal(); }
-        function atualizarStorage() { localStorage.setItem('smt_financeiro_v5', JSON.stringify(db)); }
+        function fecharModal() { document.getElementById('modalGeral').style.display = 'none'; }
+        function fecharModalExterno(e) { if(e.target.id === 'modalGeral') fecharModal(); }
+        function atualizarStorage() { localStorage.setItem('smt_v6', JSON.stringify(db)); }
 
         function renderizar() {
             const lista = document.getElementById('listaEmprestimos');
             const datalist = document.getElementById('listaClientesNomes');
             lista.innerHTML = ''; datalist.innerHTML = '';
-            let somaCapital = 0; let nomesUnicos = new Set();
+            let somaCap = 0;
 
             db.ativos.sort((a,b) => new Date(a.data) - new Date(b.data)).forEach(emp => {
-                nomesUnicos.add(emp.nome);
-                somaCapital += emp.valor;
-                
+                somaCap += emp.valor;
                 lista.innerHTML += `
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center">
-                        <div onclick="abrirHistorico('${emp.nome}')">
-                            <p class="font-black text-indigo-900 text-sm uppercase underline">${emp.nome}</p>
-                            <p class="text-[10px] text-orange-600 font-bold">VENCE: ${emp.data.split('-').reverse().join('/')}</p>
-                            <p class="text-[9px] text-gray-400">Capital: R$ ${emp.valor.toFixed(2)}</p>
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                        <div class="flex justify-between items-start">
+                            <div onclick="verHistorico('${emp.nome}')">
+                                <p class="font-black text-indigo-900 uppercase underline text-sm">${emp.nome}</p>
+                                <p class="text-[10px] text-orange-600 font-black mt-1">VENCIMENTO: ${emp.data.split('-').reverse().join('/')}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[9px] font-bold text-slate-400">TOTAL A RECEBER</p>
+                                <p class="font-black text-slate-700">R$ ${(emp.valor + emp.valorJuro).toFixed(2)}</p>
+                            </div>
                         </div>
-                        <div class="text-right">
-                            <p class="font-black text-slate-700 text-sm mb-2">R$ ${(emp.valor + emp.valorJuro).toFixed(2)}</p>
-                            <button onclick="darBaixa(${emp.id})" class="bg-indigo-600 text-white text-[10px] font-bold px-4 py-2 rounded-lg uppercase">Baixa</button>
+                        <div class="flex justify-between items-center mt-4 pt-3 border-t border-slate-50">
+                            <p class="text-[10px] font-bold text-slate-400">Capital: R$ ${emp.valor.toFixed(2)}</p>
+                            <button onclick="darBaixa(${emp.id})" class="bg-green-600 text-white text-[10px] font-black px-6 py-2 rounded-xl uppercase btn-acao shadow-md">Dar Baixa</button>
                         </div>
                     </div>`;
             });
 
-            nomesUnicos.forEach(n => datalist.innerHTML += `<option value="${n}">`);
-            document.getElementById('investido').innerText = `R$ ${somaCapital.toFixed(2)}`;
+            db.clientes.forEach(n => datalist.innerHTML += `<option value="${n}">`);
+            document.getElementById('investido').innerText = `R$ ${somaCap.toFixed(2)}`;
         }
 
         renderizar();
