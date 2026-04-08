@@ -274,8 +274,21 @@
         }
 
         function enviarZap(id) {
-            const emp = db.ativos.find(a => a.id === id); if(!emp.tel) return alert("Sem número!");
-            const msg = `Olá ${emp.nome}, passando para lembrar do compromisso de R$ ${(emp.valor + emp.valorJuro).toFixed(2)} que vence hoje. %0A%0AChave Pix: ${db.config.pix}`;
+            const emp = db.ativos.find(a => a.id === id); 
+            if(!emp.tel) return alert("Sem número!");
+        
+            const valorTotal = (emp.valor + emp.valorJuro).toFixed(2);
+            const capital = emp.valor.toFixed(2);
+            const juros = emp.valorJuro.toFixed(2);
+        
+            // Mensagem detalhada
+            const msg = `Olá *${emp.nome}*, passando para lembrar do vencimento hoje:%0A%0A` +
+                        `💰 *Capital:* R$ ${capital}%0A` +
+                        `📈 *Juros:* R$ ${juros}%0A` +
+                        `───────────────%0A` +
+                        `✅ *Total para Quitação:* R$ ${valorTotal}%0A%0A` +
+                        `*Chave Pix:* ${db.config.pix}`;
+        
             window.open(`https://wa.me/55${emp.tel}?text=${msg}`, '_blank');
         }
 
