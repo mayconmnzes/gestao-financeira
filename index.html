@@ -287,7 +287,8 @@
                         `📈 *Juros:* R$ ${juros}%0A` +
                         `───────────────%0A` +
                         `✅ *Total para Quitação:* R$ ${valorTotal}%0A%0A` +
-                        `*Chave Pix:* ${db.config.pix}`;
+                        `*Chave Pix:* ${db.config.pix}`+
+                        `📄 *Enviar o comprovante do pagamento!`;
         
             window.open(`https://wa.me/55${emp.tel}?text=${msg}`, '_blank');
         }
